@@ -1,0 +1,12 @@
+{
+  "name": "whiteboard-app",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "concurrently \"npm run start-dev --prefix Backend\" \"npm run start --prefix Frontend\"",
+    "build": "npm run build --prefix Frontend",
+    "server": "nodemon Backend/index.js"
+  },
+  "dependencies": {
+    "concurrently": "^6.5.1"
+  }
+}
