@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Table, Spin } from "antd";
+import { Link } from "react-router-dom";
 import axios from "axios";
 import "../App.css";
 
@@ -29,33 +30,41 @@ const GetAllDrawings = () => {
       title: "Title",
       dataIndex: "title",
       key: "title",
-      align: "center", // Center alignment
+      align: "center",
+      render: (text, record) => (
+        <Link
+          style={{ color: "rgb(0 0 0 / 88%)", textDecoration: "none" }}
+          to={`/drawings/${record._id}`}
+        >
+          {text}
+        </Link>
+      ),
     },
     {
       title: "Shape Type",
       dataIndex: ["shapes", 0, "type"],
       key: "shapeType",
-      align: "center", // Center alignment
+      align: "center",
     },
     {
       title: "Color",
       dataIndex: ["shapes", 0, "color"],
       key: "color",
       render: (color) => <span style={{ color }}>{color}</span>,
-      align: "center", // Center alignment
+      align: "center",
     },
     {
       title: "Line Width",
       dataIndex: ["shapes", 0, "lineWidth"],
       key: "lineWidth",
-      align: "center", // Center alignment
+      align: "center",
     },
     {
       title: "Created At",
       dataIndex: "createdAt",
       key: "createdAt",
       render: (date) => new Date(date).toLocaleString(),
-      align: "center", // Center alignment
+      align: "center",
     },
   ];
 
