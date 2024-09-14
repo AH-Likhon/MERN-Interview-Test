@@ -3,11 +3,23 @@ const Drawing = require("./drawing.model");
 // Create a new drawing
 const createDrawing = async (req, res) => {
   try {
+    // Check if a drawing with the same title already exists
+    const existingDrawing = await Drawing.findOne({ title: req.body.title });
+
+    if (existingDrawing) {
+      return res
+        .status(400)
+        .json({
+          error: "Title already exists. Please choose a different title.",
+        });
+    }
+
+    // If the title is unique, save the new drawing
     const drawing = new Drawing(req.body);
     await drawing.save();
     res.status(201).send(drawing);
   } catch (error) {
-    res.status(400).send(error);
+    res.status(500).send({ error: "Error creating drawing" });
   }
 };
 
@@ -25,7 +37,7 @@ const getAllDrawings = async (req, res) => {
 const getDrawingById = async (req, res) => {
   try {
     const drawing = await Drawing.findById(req.params.id);
-    if (!drawing) return res.status(404).send();
+    if (!drawing) return res.status(404).send({ message: "Drawing not found" });
     res.send(drawing);
   } catch (error) {
     res.status(500).send(error);
@@ -38,7 +50,7 @@ const updateDrawingById = async (req, res) => {
     const drawing = await Drawing.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
     });
-    if (!drawing) return res.status(404).send();
+    if (!drawing) return res.status(404).send({ message: "Drawing not found" });
     res.send(drawing);
   } catch (error) {
     res.status(400).send(error);
@@ -49,7 +61,7 @@ const updateDrawingById = async (req, res) => {
 const deleteDrawingById = async (req, res) => {
   try {
     const drawing = await Drawing.findByIdAndDelete(req.params.id);
-    if (!drawing) return res.status(404).send();
+    if (!drawing) return res.status(404).send({ message: "Drawing not found" });
     res.send(drawing);
   } catch (error) {
     res.status(500).send(error);

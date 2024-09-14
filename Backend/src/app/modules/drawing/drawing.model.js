@@ -1,38 +1,25 @@
 const mongoose = require("mongoose");
 
-// Schema for a Line
-const lineSchema = new mongoose.Schema({
-  start: { x: Number, y: Number },
-  end: { x: Number, y: Number },
-  color: { type: String, default: "#000000" },
-  thickness: { type: Number, default: 2 },
-});
-
-// Schema for a Shape
+// Define the structure for a line, rectangle, circle, or text object
 const shapeSchema = new mongoose.Schema({
-  type: { type: String, enum: ["rectangle", "circle"], required: true },
-  position: { x: Number, y: Number },
-  dimensions: { width: Number, height: Number },
-  radius: Number, // For circles
-  color: { type: String, default: "#000000" },
-  thickness: { type: Number, default: 2 },
+  type: {
+    type: String,
+    enum: ["line", "rectangle", "circle", "text"],
+    required: true,
+  },
+  startPosition: { x: Number, y: Number }, // Common for all shapes
+  endPosition: { x: Number, y: Number }, // For line, rectangle, and circle
+  text: { type: String }, // Only for text type
+  radius: { type: Number }, // Only for circle type
+  color: { type: String }, // Optional, for color of lines/shapes
+  lineWidth: { type: Number }, // Optional, thickness of lines/shapes
 });
 
-// Schema for Text Annotation
-const textAnnotationSchema = new mongoose.Schema({
-  position: { x: Number, y: Number },
-  text: { type: String, required: true },
-  fontSize: { type: Number, default: 12 },
-  color: { type: String, default: "#000000" },
-});
-
-// Schema for a Drawing (Whiteboard)
 const drawingSchema = new mongoose.Schema({
-  title: { type: String, required: true },
-  lines: [lineSchema],
-  shapes: [shapeSchema],
-  textAnnotations: [textAnnotationSchema],
+  title: { type: String, required: true, unique: true },
+  shapes: [shapeSchema], // Each drawing can contain multiple shapes
   createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now },
 });
 
 const Drawing = mongoose.model("Drawing", drawingSchema);

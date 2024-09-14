@@ -1,7 +1,9 @@
-# Run Both Frontend and Backend:
+# Whiteboard App
 
-## command (concurrently): npm start
+## Run Both Frontend and Backend:
 
-## Frontend: [localhost:3000](http://localhost:3000/)
+### command (concurrently): npm start
 
-## Backend: [localhost:5000](http://localhost:5000/)
+### Frontend: [localhost:3000](http://localhost:3000/)
+
+### Backend: [localhost:5000](http://localhost:5000/)
