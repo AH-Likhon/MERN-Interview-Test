@@ -36,7 +36,9 @@ const GetSpecificDrawing = () => {
         ref={(canvas) => {
           if (canvas) {
             const context = canvas.getContext("2d");
-            drawing.shapes.forEach((shape) => {
+            const shape = drawing.shape; // Assuming a single shape object
+
+            if (shape) {
               context.strokeStyle = shape.color;
               context.lineWidth = shape.lineWidth;
 
@@ -87,7 +89,7 @@ const GetSpecificDrawing = () => {
                 default:
                   break;
               }
-            });
+            }
           }
         }}
       />

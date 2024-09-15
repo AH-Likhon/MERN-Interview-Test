@@ -5,6 +5,7 @@ import Whiteboard from "./components/WhiteboardDrawing";
 import GetAllDrawings from "./components/GetAllDrawings";
 import GetSpecificDrawing from "./components/GetSpecificDrawing";
 import Navbar from "./common/Navbar/Navbar";
+import EditDrawing from "./components/EditDrawing";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Route path="/" element={<Whiteboard />} />
         <Route path="/drawings" element={<GetAllDrawings />} />
         <Route path="/drawings/:id" element={<GetSpecificDrawing />} />
+        <Route path="/drawings/:id/edit" element={<EditDrawing />} />
       </Routes>
     </Router>
   );

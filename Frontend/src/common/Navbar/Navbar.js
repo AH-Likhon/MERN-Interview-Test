@@ -29,6 +29,7 @@ const Navbar = () => {
           placement="right"
           onClose={onClose}
           visible={visible}
+          className="custom-menu"
         >
           <Menu mode="inline" theme="dark" onClick={onClose}>
             <Menu.Item key="1">
@@ -38,7 +39,7 @@ const Navbar = () => {
             </Menu.Item>
             <Menu.Item key="2">
               <Link className="link" to="/drawings">
-                Drawing
+                Drawings
               </Link>
             </Menu.Item>
           </Menu>

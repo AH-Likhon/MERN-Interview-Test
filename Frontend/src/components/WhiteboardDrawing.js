@@ -1,10 +1,8 @@
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import axios from "axios";
-import Button from "react-bootstrap/Button";
 import Swal from "sweetalert2";
 import "../App.css";
+import { Button, Input, message } from "antd";
 
 const Whiteboard = () => {
   const colors = useMemo(
@@ -15,8 +13,9 @@ const Whiteboard = () => {
   const contextReference = useRef(null);
   const [isPressed, setIsPressed] = useState(false);
   const [drawingTitle, setDrawingTitle] = useState("");
-  const [shapes, setShapes] = useState([]);
+  const [shape, setShape] = useState(null);
   const [drawingMode, setDrawingMode] = useState("line");
+  const [lineWidth, setLineWidth] = useState(5); // Dynamic line width state
 
   const clearCanvas = () => {
     const canvas = canvasReference.current;
@@ -44,32 +43,26 @@ const Whiteboard = () => {
       });
 
       if (text) {
-        setShapes((prevShapes) => [
-          ...prevShapes,
-          {
-            type: "text",
-            startPosition: { x, y },
-            text,
-            color: contextReference.current.strokeStyle,
-            font: "20px Arial",
-          },
-        ]);
+        setShape({
+          type: "text",
+          startPosition: { x, y },
+          text,
+          color: contextReference.current.strokeStyle,
+          font: "20px Arial",
+        });
 
         Swal.fire(`You entered: ${text}`);
       }
     } else {
       contextReference.current.moveTo(x, y);
       setIsPressed(true);
-      setShapes((prevShapes) => [
-        ...prevShapes,
-        {
-          type: drawingMode,
-          startPosition: { x, y },
-          endPosition: { x, y },
-          color: contextReference.current.strokeStyle,
-          lineWidth: contextReference.current.lineWidth,
-        },
-      ]);
+      setShape({
+        type: drawingMode,
+        startPosition: { x, y },
+        endPosition: { x, y },
+        color: contextReference.current.strokeStyle,
+        lineWidth: lineWidth, // Use dynamic line width
+      });
     }
   };
 
@@ -80,15 +73,12 @@ const Whiteboard = () => {
     const context = contextReference.current;
     context.lineTo(x, y);
     context.stroke();
-    setShapes((prevShapes) => {
-      const updatedShapes = [...prevShapes];
-      const lastShape = updatedShapes.pop();
-      if (lastShape) {
-        lastShape.endPosition = { x, y };
-        updatedShapes.push(lastShape);
-      }
-      return updatedShapes;
-    });
+    if (shape && shape.type !== "text") {
+      setShape((prevShape) => ({
+        ...prevShape,
+        endPosition: { x, y },
+      }));
+    }
   };
 
   const endDraw = () => {
@@ -100,32 +90,23 @@ const Whiteboard = () => {
 
   const saveDrawing = async () => {
     if (!drawingTitle.trim()) {
-      toast.warn("Please enter a title for your drawing!", {
-        position: "top-center", // This will center the toast at the top
-        autoClose: 3000, // Auto close after 3 seconds
-      });
+      message.warning("Please enter a title for your drawing!");
       return;
     }
     try {
       const res = await axios.post("/api/v1/drawings", {
         title: drawingTitle,
-        shapes,
+        shape: { ...shape, lineWidth }, // Ensure lineWidth is included
       });
-      console.log("Drawing saved:", res);
-
-      toast.success(`Drawing saved successfully!`, {
-        position: "top-center", // This will center the toast at the top
-        autoClose: 3000, // Auto close after 3 seconds
-      });
+      console.log("Drawing saved:", shape, drawingTitle);
+      res.status === 201 && message.success(`Drawing saved successfully!`);
       clearCanvas();
       setDrawingTitle("");
-      setShapes([]);
+      setShape(null); // Reset the shape
     } catch (error) {
-      // console.error("Error saving drawing:", error?.response?.data?.error);
-      toast.error(error?.response?.data?.error, {
-        position: "top-center", // This will center the toast at the top
-        autoClose: 3000, // Auto close after 3 seconds
-      });
+      // console.log(error?.response?.data?.error?.message);
+      error?.response?.data?.error?.message &&
+        message.error("Draw the shape on the box!");
     }
   };
 
@@ -134,9 +115,9 @@ const Whiteboard = () => {
     const context = canvas.getContext("2d");
     context.lineCap = "round";
     context.strokeStyle = colors[0];
-    context.lineWidth = 5;
+    context.lineWidth = lineWidth;
     contextReference.current = context;
-  }, [colors]);
+  }, [colors, lineWidth]); // Include lineWidth in dependencies
 
   const setColor = (color) => {
     contextReference.current.strokeStyle = color;
@@ -148,7 +129,7 @@ const Whiteboard = () => {
 
     const redrawCanvas = () => {
       context.clearRect(0, 0, canvas.width, canvas.height);
-      shapes.forEach((shape) => {
+      if (shape) {
         context.strokeStyle = shape.color;
         context.lineWidth = shape.lineWidth;
 
@@ -201,15 +182,15 @@ const Whiteboard = () => {
           default:
             break;
         }
-      });
+      }
     };
 
     redrawCanvas();
-  }, [shapes]);
+  }, [shape]);
 
   return (
     <div className="App">
-      <input
+      <Input
         type="text"
         value={drawingTitle}
         onChange={(e) => setDrawingTitle(e.target.value)}
@@ -224,7 +205,6 @@ const Whiteboard = () => {
       />
       <div className="buttons">
         <Button variant="secondary" onClick={clearCanvas}>
-          {" "}
           CLR
         </Button>
         <Button variant="success" onClick={saveDrawing}>
@@ -237,6 +217,16 @@ const Whiteboard = () => {
             style={{ backgroundColor: color }}
           ></Button>
         ))}
+        <select
+          onChange={(e) => setLineWidth(Number(e.target.value))}
+          value={lineWidth}
+        >
+          {[1, 2, 5, 10, 15, 20].map((width) => (
+            <option key={width} value={width}>
+              {width}
+            </option>
+          ))}
+        </select>
         <Button variant="secondary" onClick={() => setDrawingMode("line")}>
           Line
         </Button>
@@ -250,8 +240,6 @@ const Whiteboard = () => {
           Text
         </Button>
       </div>
-
-      <ToastContainer />
     </div>
   );
 };

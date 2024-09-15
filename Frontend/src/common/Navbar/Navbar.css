@@ -22,16 +22,7 @@
   font-weight: bold;
 }
 
-.desktop-menu {
-  display: flex;
-}
-
-@media (max-width: 768px) {
-  .desktop-menu {
-    display: none;
-  }
-
-  .menu-button {
-    display: block;
-  }
+.custom-menu {
+  background-color: #001529 !important;
+  color: #fff !important;
 }

@@ -5,13 +5,12 @@ const createDrawing = async (req, res) => {
   try {
     // Check if a drawing with the same title already exists
     const existingDrawing = await Drawing.findOne({ title: req.body.title });
+    // console.log(req.body);
 
     if (existingDrawing) {
-      return res
-        .status(400)
-        .json({
-          error: "Title already exists. Please choose a different title.",
-        });
+      return res.status(400).json({
+        error: "Title already exists. Please choose a different title.",
+      });
     }
 
     // If the title is unique, save the new drawing
@@ -19,7 +18,7 @@ const createDrawing = async (req, res) => {
     await drawing.save();
     res.status(201).send(drawing);
   } catch (error) {
-    res.status(500).send({ error: "Error creating drawing" });
+    res.status(500).send({ error });
   }
 };
 

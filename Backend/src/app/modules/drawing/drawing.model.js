@@ -7,17 +7,17 @@ const shapeSchema = new mongoose.Schema({
     enum: ["line", "rectangle", "circle", "text"],
     required: true,
   },
-  startPosition: { x: Number, y: Number }, // Common for all shapes
-  endPosition: { x: Number, y: Number }, // For line, rectangle, and circle
-  text: { type: String }, // Only for text type
-  radius: { type: Number }, // Only for circle type
-  color: { type: String }, // Optional, for color of lines/shapes
-  lineWidth: { type: Number }, // Optional, thickness of lines/shapes
+  startPosition: { x: Number, y: Number },
+  endPosition: { x: Number, y: Number },
+  text: { type: String },
+  radius: { type: Number },
+  color: { type: String },
+  lineWidth: { type: Number },
 });
 
 const drawingSchema = new mongoose.Schema({
   title: { type: String, required: true, unique: true },
-  shapes: [shapeSchema], // Each drawing can contain multiple shapes
+  shape: shapeSchema,
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
 });
