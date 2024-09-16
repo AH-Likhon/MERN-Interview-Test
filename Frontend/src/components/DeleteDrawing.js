@@ -28,10 +28,10 @@ const DeleteDrawing = () => {
     try {
       await axios.delete(`/api/v1/drawings/${id}`);
       message.success("Drawing deleted successfully!");
-      navigate("/drawings"); // Redirect to drawings list after deletion
+      navigate("/drawings");
     } catch (error) {
+      // console.error("Error deleting drawing:", error);
       message.error("Failed to delete drawing.");
-      console.error("Error deleting drawing:", error);
     }
   };
 

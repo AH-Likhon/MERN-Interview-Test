@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-// Define the structure for a line, rectangle, circle, or text object
+// Schema for a line, rectangle, circle, or text object
 const shapeSchema = new mongoose.Schema({
   type: {
     type: String,
@@ -15,12 +15,16 @@ const shapeSchema = new mongoose.Schema({
   lineWidth: { type: Number },
 });
 
-const drawingSchema = new mongoose.Schema({
-  title: { type: String, required: true, unique: true },
-  shape: shapeSchema,
-  createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now },
-});
+// Drawing Schema Model
+const drawingSchema = new mongoose.Schema(
+  {
+    title: { type: String, required: true, unique: true },
+    shape: shapeSchema,
+    createdAt: { type: Date, default: Date.now },
+    updatedAt: { type: Date, default: Date.now },
+  },
+  { timestamps: true }
+);
 
 const Drawing = mongoose.model("Drawing", drawingSchema);
 

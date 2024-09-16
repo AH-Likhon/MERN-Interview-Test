@@ -9,7 +9,6 @@ const {
 
 const router = express.Router();
 
-// Routes for CRUD operations
 router.post("/", createDrawing);
 router.get("/", getAllDrawings);
 router.get("/:id", getDrawingById);

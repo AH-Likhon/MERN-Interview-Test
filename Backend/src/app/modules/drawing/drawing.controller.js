@@ -25,7 +25,7 @@ const createDrawing = async (req, res) => {
 // Get all drawings
 const getAllDrawings = async (req, res) => {
   try {
-    const drawings = await Drawing.find();
+    const drawings = await Drawing.find().sort({ updatedAt: -1 });
     res.send(drawings);
   } catch (error) {
     res.status(500).send(error);
